@@ -1,0 +1,51 @@
+---
+title: "Plotly Exercise"
+author: "WR"
+date: "4/29/2020"
+output:
+  ioslides_presentation: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r, include=FALSE}
+#load libraries
+library(plotly)
+library(dplyr)
+#load data
+covid <- read.csv("w3-covid.csv")
+```
+
+## <span style="font-size:25px; margin-top:-20px">Linear Model: *log(coronavirus cases) = a + b \* latitude* </span>
+
+```{r, echo=FALSE, message=FALSE, fig.align='center'}
+
+#regression model
+mod <- lm(logcases ~ lat,data=covid)
+
+ft <- list(
+            family = "Courier New, monospace",
+            size = 15,
+            color = "#7f7f7f"
+        )
+x <- list(
+            title = "Latitude",
+            titlefont=ft
+        )
+y <- list(
+                title = "Log of Coronavirus Cases",
+                titlefont=ft
+            )
+f <- plot_ly(covid, x=covid$lat, y=covid$logcases, 
+                         text=covid$province.state, 
+                         color = covid$cdensity)
+f <- f %>% add_markers()
+f <- f %>% layout(xaxis = x, yaxis = y)
+f <- f %>% add_trace(y=fitted(mod), mode="lines", name="fitted regression line", color=I("red"))
+f
+```
+<span style="font-size:12px">Data Source: CSSE at Johns Hopkins University --  [confirmed_US](https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series),
+[confirmed_global_iso3_regions](https://data.humdata.org/dataset/novel-coronavirus-2019-ncov-cases)</span>
+
